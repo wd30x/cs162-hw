@@ -25,7 +25,7 @@ Mutators take a reference to a list as first arg.
 /* Basic utililties */
 
 char *new_string(char *str) {
-  return strcpy((char *)malloc(strlen(str)+1), str);
+  return strcpy((char *)malloc(strlen(str) + 1), str);
 }
 
 void init_words(WordCount **wclist) {
@@ -34,18 +34,43 @@ void init_words(WordCount **wclist) {
 }
 
 size_t len_words(WordCount *wchead) {
-    size_t len = 0;
-    return len;
+  size_t len = 0;
+  WordCount *wc = wchead;
+  while(wc != NULL){
+    len++;
+    wc = wc->next;
+  }
+  return len;
 }
 
 WordCount *find_word(WordCount *wchead, char *word) {
   /* Return count for word, if it exists */
   WordCount *wc = NULL;
+  while (wchead != NULL) {
+    if (strcmp(wchead->word, word) == 0) {
+      wc = wchead;
+    }
+    wchead = wchead->next;
+  }
   return wc;
 }
 
 void add_word(WordCount **wclist, char *word) {
-  /* If word is present in word_counts list, increment the count, otw insert with count 1. */
+  /* If word is present in word_counts list, increment the count, otw insert
+   * with count 1. */
+  WordCount *wc;
+  WordCount *wchead = *wclist;
+  wc = find_word(wchead, word);
+  if (wc == NULL) {
+    wc = (WordCount *)malloc(sizeof(WordCount));
+    wc->word = word;
+    wc->count = 1;
+    wc->next = wchead;
+    *wclist = wc;
+
+  } else {
+    wc->count++;
+  }
 }
 
 void fprint_words(WordCount *wchead, FILE *ofile) {

@@ -66,13 +66,39 @@ int num_words(FILE *infile) {
  * Given infile, extracts and adds each word in the FILE to `wclist`.
  * Useful functions: fgetc(), isalpha(), tolower(), add_word().
  */
-void count_words(WordCount **wclist, FILE *infile) {}
+void count_words(WordCount **wclist, FILE *infile) {
+  int c;
+  char *word = (char *)malloc(sizeof(char)*65);
+  int len = 0;
+  while (!feof(infile)) {
+    c = fgetc(infile);
+    c = tolower(c);
+    if (isspace(c) && len >= 2) {
+      word[len] = '\0';
+      add_word(wclist, word);
+      word = new_string(word);
+      len = 0;
+    } else if (isalpha(c)) {
+      word[len] = c;
+      len++;
+    }
+  }
+}
 
 /*
  * Comparator to sort list by frequency.
  * Useful function: strcmp().
  */
 static bool wordcount_less(const WordCount *wc1, const WordCount *wc2) {
+  if(wc1->count < wc2->count){
+    return 1;
+  }
+  else if(wc1->count > wc2->count){
+    return 0;
+  }
+  else if (strcmp(wc1->word, wc2->word) < 0) {
+    return 1;
+  }
   return 0;
 }
 
@@ -136,14 +162,22 @@ int main(int argc, char *argv[]) {
   if ((argc - optind) < 1) {
     // No input file specified, instead, read from STDIN instead.
     infile = stdin;
-    total_words = num_words(stdin);
+    if (count_mode) {
+      total_words = num_words(stdin);
+    } else {
+      count_words(&word_counts, stdin);
+    }
   } else {
     // At least one file specified. Useful functions: fopen(), fclose().
     // The first file can be found at argv[optind]. The last file can be
     // found at argv[argc-1].
     for (int j = optind; j < argc; j++) {
       infile = fopen(argv[j], "r");
-      total_words += num_words(infile);
+      if (count_mode) {
+        total_words += num_words(infile);
+      } else {
+        count_words(&word_counts, infile);
+      }
       fclose(infile);
     }
   }
