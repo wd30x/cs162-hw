@@ -1,2 +1,5 @@
 abc def AaA
 bbb zzz aaa
+ABC acb bas
+ABC AAA bbb
+ZZZ zzz DEF
