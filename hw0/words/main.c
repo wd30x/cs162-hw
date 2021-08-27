@@ -47,14 +47,14 @@ WordCount *word_counts = NULL;
 int num_words(FILE *infile) {
   int num_words = 0;
   int c;
-  int flag = 0;
+  int len = 0;
   while (!feof(infile)) {
     c = fgetc(infile);
-    if (isspace(c) && (flag >= 2)) {
+    if (isspace(c) && (len >= 2)) {
       num_words++;
-      flag = 0;
+      len = 0;
     } else if (isalpha(c)) {
-      flag++;
+      len++;
     }
   }
   return num_words;
